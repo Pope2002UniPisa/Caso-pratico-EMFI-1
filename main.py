@@ -1,0 +1,1 @@
+# ciao mi chiamo Andrea e sono un programmatore, mi piace molto programmare in Python e JavaScript.
