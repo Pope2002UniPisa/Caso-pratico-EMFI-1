@@ -53,8 +53,6 @@
 \pretitle{%
 \begin{center}
 \includegraphics[height=2.2cm]{logoUnipi_black.png}
-\hspace{1.8cm}
-\includegraphics[height=2.2cm]{logosantanna.png}
 
 \vspace{1.5em}
 \rule{\textwidth}{0.5pt}
@@ -86,16 +84,14 @@
 \title{%
 {\large\bfseries\selectfont
 \begin{tabular}{c}
-% Process mining analysis of arbitrage opportunities for tri-listed stocks
-Modeling Arbitrage Opportunities in Tri-Listed Stocks \\ [0.3em]
-Through Event-Based Process Mining
+Caso pratico EMFI 1
 \end{tabular}
 }%
 }
 
 \author{%
-  \textbf{Leonardo Pratelli}\thanks{l.pratelli3@studenti.unipi.it; s3l.pratelli@santannapisa.it}\\[0.7em]
-  \textit{University of Pisa and Scuola Superiore Sant'Anna}
+  \textbf{Leonardo Pratelli} \thanks{l.pratelli3@studenti.unipi.it} \,and \, \textbf{Sara Albotica} \thanks{s.albotica@studenti.unipi.it}\\[0.7em]
+  \textit{University of Pisa}
 }
 
 \begin{document}
@@ -106,15 +102,11 @@ Through Event-Based Process Mining
 {\large\bfseries Abstract}
 \end{center}
 
-This project analyzes the phenomenon of arbitrage opportunities between financial markets, with particular reference to securities simultaneously listed on multiple exchanges. The focus is on three companies: Unilever (UL), Shell (SHELL), and HSBC, considered as representative case studies of multi-listed securities.
+Parte A – Frontiera efficiente (punti 1-7): Si scaricano i rendimenti mensili total return dividend-adjusted di 10 azioni per 10 anni (120 osservazioni), scegliendo titoli diversificati per settore. Si costruisce la frontiera efficiente media-deviazione standard su un sottoinsieme di 5 titoli sia analiticamente che tramite ottimizzazione numerica, prima senza vincoli (short selling ammesso) poi con non-negatività dei pesi. Si calcolano e si confrontano il portafoglio di minima varianza globale (GMV), i portafogli equally weighted (EW5, EW10) e una proxy del portafoglio di mercato rispetto alla frontiera. Infine, includendo un tasso risk-free (BTP a breve), si identifica il portafoglio di tangenza e il portafoglio ottimo che massimizza l'utilità media-varianza per un dato coefficiente di avversione al rischio A.
 
-The main objective is to identify and analyze the time windows in which the same asset presents price differences across different trading venues, such as to generate potential arbitrage opportunities. To this end, high-frequency financial data and a Python-based framework for data cleaning, alignment, and transformation are employed.
+Parte B – CAPM e Single Index Model (punti 8-9): Si stimano i beta dei 10 titoli rispetto al portafoglio di mercato, verificandone la significatività statistica (incluso l'alpha). Si ricostruisce la matrice varianza-covarianza tramite il Single Index Model/CAPM e si confronta la frontiera efficiente risultante con quella empirica della Parte A.
 
-The project also integrates a simulation component, necessary to reconstruct markets that are not directly observable, and a validation phase to compare the statistical properties of simulated data with real data. The identified opportunities are then analyzed through a trading simulation that accounts for transaction costs and risk.
-
-Finally, a process mining approach is introduced to represent the dynamics of arbitrage opportunities as sequences of events, enabling a structured and interpretive view of the phenomenon.
-
-Overall, the work aims to provide a first integrated analysis combining quantitative finance, simulation, and process mining, offering useful tools for better understanding the dynamics of multi-venue financial markets.
+Parte C – Stabilità e ruolo della dimensionalità (punti 1-5): Tramite bootstrap i.i.d. (500 campioni di T=120 mesi con reinserimento), si analizza la stabilità del portafoglio di tangenza al variare della dimensione N del problema (N=5 vs N=10), studiando come la variabilità dei pesi ottimali e la distribuzione dello Sharpe ratio cambiano al crescere del rapporto N/T.
 \newpage
 \section{Introduction}
 

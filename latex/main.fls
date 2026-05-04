@@ -1,8 +1,8 @@
-PWD /Users/leonardopratelli/Desktop/Sant'Anna/ICT-MAIN-personal/Financial_Project_Performance_Analysis/latex
+PWD /Users/leonardopratelli/Desktop/EMFI/Caso-pratico-EMFI-1/latex
 INPUT /usr/local/texlive/2026/texmf.cnf
 INPUT /usr/local/texlive/2026/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT /Users/leonardopratelli/Desktop/Sant'Anna/ICT-MAIN-personal/Financial_Project_Performance_Analysis/latex/main.tex
+INPUT /Users/leonardopratelli/Desktop/EMFI/Caso-pratico-EMFI-1/latex/main.tex
 OUTPUT main.log
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/base/article.cls
@@ -154,11 +154,6 @@ INPUT ./logoUnipi_black.png
 INPUT ./logoUnipi_black.png
 INPUT ./logoUnipi_black.png
 INPUT ./logoUnipi_black.png
-INPUT ./logosantanna.png
-INPUT ./logosantanna.png
-INPUT ./logosantanna.png
-INPUT ./logosantanna.png
-INPUT ./logosantanna.png
 INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/jknappen/ec/ecrm1728.tfm
 INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/jknappen/ec/ecbx1728.tfm
 INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/jknappen/ec/ecrm1200.tfm
