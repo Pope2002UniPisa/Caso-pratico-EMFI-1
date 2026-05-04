@@ -438,8 +438,9 @@ def print_ols_table(risky, ols):
             "R²":            round(o["R2"], 4),
         })
     tab = pd.DataFrame(rows).set_index("Ticker")
+    T_actual = len(ols[risky[0]]["eps"])   # ricavato dai residui OLS
     print("\nStima OLS: r_i = alpha + beta * r_m + eps")
-    print(f"T = {119} osservazioni mensili\n")
+    print(f"T = {T_actual} osservazioni mensili\n")
     print(tab.to_string())
     print("\nLegenda: *** p<0.01  ** p<0.05  * p<0.10")
 
@@ -490,9 +491,30 @@ if __name__ == "__main__":
     Corr_emp = returns.corr()
     plot_correlation_comparison(Corr_SIM, Corr_emp, RISKY)
 
-    # ── Step 6: Rendimenti CAPM e confronto frontiere (Punto 9) ─────────────
+    # ── Step 6: Rendimenti CAPM, std dev SIM e confronto frontiere (Punto 9) ─
     # CAPM: E[r_i] = rf + beta_i * (mu_m - rf)
     mu_capm_arr = rf + betas_arr * (mu_m - rf)
+
+    # Deviazioni standard SIM (annualizzate): sigma_i = sqrt(Sigma_SIM[i,i]) * sqrt(12)
+    # Per costruzione del SIM: Var(r_i) = beta_i^2*Var(r_m) + Var(eps_i)
+    # → diagonale di Sigma_SIM ≈ varianza empirica → sigma_SIM ≈ sigma_emp
+    sigma_sim_ann = np.sqrt(np.diag(Sigma_SIM)) * np.sqrt(ann) * 100
+    sigma_emp_ann = np.array([returns[t].std() for t in RISKY]) * np.sqrt(ann) * 100
+    mu_emp_arr    = np.array([returns[t].mean() for t in RISKY])
+
+    # Tabella riepilogativa (Punto 9): mu CAPM, sigma SIM, alpha
+    print("\nPunto 9 – Statistiche SIM/CAPM vs Empiriche (annualizzate):")
+    tab_sim = pd.DataFrame({
+        "Beta":                 betas_arr.round(4),
+        "μ CAPM (%)":          (mu_capm_arr * ann * 100).round(2),
+        "μ Empirico (%)":      (mu_emp_arr  * ann * 100).round(2),
+        "σ SIM (%)":           sigma_sim_ann.round(2),
+        "σ Empirica (%)":      sigma_emp_ann.round(2),
+        "Alpha Jensen (%)":    ((mu_emp_arr - mu_capm_arr) * ann * 100).round(2),
+    }, index=RISKY)
+    print(tab_sim.to_string())
+    print("\nNota: σ SIM ≈ σ empirica per asset singoli (diagonale preservata dal SIM).")
+    print("      Le differenze sulle frontiere emergono dai termini off-diagonali (covarianze).")
 
     # Estrai parametri per i 5 titoli selezionati
     sel_idx  = [RISKY.index(t) for t in SELECTED]
