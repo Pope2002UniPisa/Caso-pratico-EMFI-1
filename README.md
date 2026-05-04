@@ -12,12 +12,21 @@
 Caso-pratico-EMFI-1/
 ├── EMFI_prova applicata_parte 1_2026.pdf   # Traccia ufficiale
 ├── requiremets.txt                          # Dipendenze Python
-├── main.py                                  # Entry point (chiama le parti)
-├── parte_A.py                               # Frontiera efficiente (punti 1–7)
-├── parte_B.py                               # CAPM e Single Index Model (punti 8–9)
-├── parte_C.py                               # Stabilità e bootstrap (punti 1–5)
-├── latex/                                   # Report scritto (main.tex → main.pdf)
-└── README.md                                # Questo file
+├── main.py                                  # Entry point
+├── README.md
+├── parte_A/                                 # Frontiera Efficiente (Punti 1–7)
+│   ├── notebook_A.ipynb                     # Notebook interattivo
+│   ├── parte_A.py                           # Script
+│   └── *.png                                # Grafici generati
+├── parte_B/                                 # CAPM e Single Index Model (Punti 8–9)
+│   ├── notebook_B.ipynb                     # Notebook interattivo
+│   ├── parte_B.py                           # Script
+│   └── *.png
+├── parte_C/                                 # Stabilità e Bootstrap (Punti 1–5)
+│   ├── notebook_C.ipynb                     # Notebook interattivo
+│   ├── parte_C.py                           # Script
+│   └── *.png
+└── latex/                                   # Report scritto (main.tex → main.pdf)
 ```
 
 ---
@@ -28,23 +37,18 @@ Caso-pratico-EMFI-1/
 pip install -r requiremets.txt
 ```
 
-Librerie usate:
-
 | Libreria | Utilizzo |
 |---|---|
 | `yfinance` | Download dati storici da Yahoo Finance |
 | `pandas` | Gestione serie temporali e DataFrame |
 | `numpy` | Algebra lineare, calcoli matriciali |
-| `scipy` | Ottimizzazione numerica (minimize) |
-| `matplotlib` | Grafici (frontiera efficiente, ecc.) |
-| `seaborn` | Heatmap della matrice di correlazione |
+| `scipy` | Ottimizzazione numerica e test statistici OLS |
+| `matplotlib` | Grafici (frontiera efficiente, SML, CML, ecc.) |
+| `seaborn` | Heatmap matrici di correlazione |
 
 ---
 
 ## Scelta degli asset (struttura 3-3-3-1)
-
-La traccia richiede 10 titoli con buona diversificazione settoriale.  
-La struttura scelta è **3 settori × 3 aziende + 1 indice**:
 
 | Settore | Ticker | Azienda | Motivazione |
 |---|---|---|---|
@@ -52,79 +56,63 @@ La struttura scelta è **3 settori × 3 aziende + 1 indice**:
 | | MSFT | Microsoft | Cloud + AI, stabile e crescente |
 | | NVDA | Nvidia | Semiconduttori/AI, alta volatilità e rendimento |
 | **Healthcare** | JNJ | Johnson & Johnson | Difensivo, dividendi stabili |
-| | PFE | Pfizer | Farmaceutico ciclico (COVID + pipeline) |
-| | MRK | Merck | Oncologia, meno ciclico di Pfizer |
-| **Energy** | XOM | ExxonMobil | Major petrolifera USA, legata al prezzo del greggio |
+| | PFE | Pfizer | Farmaceutico ciclico |
+| | MRK | Merck | Oncologia, bassa correlazione con tech (ρ=0.04 con NVDA) |
+| **Energy** | XOM | ExxonMobil | Major petrolifera USA |
 | | CVX | Chevron | Diversificata, ottimo dividendo |
 | | BP | BP | Europea, esposizione diversa da XOM/CVX |
-| **Indice** | ^GSPC | S&P 500 | Proxy del portafoglio di mercato (usato nel CAPM) |
+| **Indice** | ^GSPC | S&P 500 | Proxy portafoglio di mercato (CAPM) |
 
-**Razionale della diversificazione:**  
-Tech e Healthcare hanno bassa correlazione storica (settori growth vs difensivo).  
-Energy è legata al ciclo delle materie prime e ha dinamiche quasi indipendenti.  
-L'S&P 500 viene usato come benchmark di mercato per la stima dei beta (Parte B).
+**5 titoli selezionati per la frontiera (Parte A):** NVDA, MSFT, JNJ, MRK, XOM  
+Razionale: massima diversificazione settoriale (tech + healthcare + energy) con correlazioni inter-settore basse.
 
 ---
 
-## Parte A – Frontiera Efficiente (`parte_A.py`)
+## Parte A – Frontiera Efficiente (`parte_A/`)
 
-### Punto 1 – Download dati e statistiche descrittive
+| Blocco | Punto traccia | Contenuto | Output PNG |
+|--------|---------------|-----------|------------|
+| 0–2    | —             | Import, download, rendimenti logaritmici | — |
+| 3      | 1             | Statistiche descrittive annualizzate | — |
+| 4      | 1             | Matrice varianza-covarianza + heatmap | `covariance_heatmap.png` |
+| 5      | 1             | Matrice di correlazione + heatmap | `correlation_heatmap.png` |
+| 6      | 1             | Scatter rischio vs rendimento (10 asset) | `risk_return_scatter.png` |
+| 7      | 2             | Selezione 5 titoli, scalari Markowitz, GMV | — |
+| 8      | 2             | Frontiera analitica + numerica (50 punti) | `efficient_frontier_A2.png` |
+| 9      | 3             | Frontiera long-only (no short selling) | `efficient_frontier_A3_comparison.png` |
+| 10     | 4             | Portafoglio di mercato vs frontiera | `market_portfolio_A4.png` |
+| 11     | 5             | GMV, EW5, EW10 + tabella confronto | `benchmarks_A5.png` |
+| 12     | 6             | CML e portafoglio di tangenza | `tangency_CML_A6.png` |
+| 13     | 7             | Portafoglio ottimo con A=3, curva indifferenza | `optimal_portfolio_A7.png` |
 
-**Cosa si fa:**  
-Si scaricano i prezzi mensili *adjusted* (rettificati per dividendi e split) di tutti e 10 i titoli per il periodo **gennaio 2015 – gennaio 2025**, ottenendo circa 120 osservazioni mensili come richiesto dalla traccia.
-
-**Passaggi nel codice:**
-
-1. **`download_prices()`**  
-   - Usa `yf.download()` con `auto_adjust=True` per ottenere i prezzi *total return* (dividendi inclusi).  
-   - Aggrega i dati giornalieri a mensili con `.resample("ME").last()`: prende il prezzo di chiusura dell'ultimo giorno di borsa di ogni mese.  
-   - Rinomina `^GSPC` in `SP500` per evitare problemi nei nomi delle colonne.
-
-2. **`compute_returns()`**  
-   - Calcola i **rendimenti logaritmici** mensili: `r_t = ln(P_t / P_{t-1})`  
-   - Perché logaritmici? Sono additivi nel tempo, simmetrici e approssimano meglio la normalità rispetto ai rendimenti semplici — ipotesi necessaria per la teoria di Markowitz.
-
-3. **`compute_statistics()`**  
-   - **Vettore dei rendimenti medi** `μ`: media campionaria di ogni serie di rendimenti.  
-   - **Matrice di varianza-covarianza** `Σ`: misura quanto i rendimenti variano insieme. L'elemento diagonale è la varianza di ogni titolo; gli elementi off-diagonali misurano la co-movimentazione tra coppie di titoli. Pandas usa il divisore `(T-1)` (stima non distorta).  
-   - **Matrice di correlazione** `ρ`: versione normalizzata di `Σ`, valori in `[-1, +1]`. Rho vicino a 0 tra settori diversi → forte diversificazione.
-
-4. **`print_summary()`**  
-   - Stampa le statistiche annualizzate (× 12 per i rendimenti, × √12 per le deviazioni standard), valide sotto l'ipotesi i.i.d. dei rendimenti mensili.  
-   - Calcola anche uno Sharpe Ratio grezzo (con `rf = 0`) come primo confronto tra i titoli.
-
-5. **`plot_correlation()`**  
-   - Produce una heatmap della matrice di correlazione (salvata in `correlation_heatmap.png`).  
-   - Colori: rosso = correlazione alta (si muovono insieme), bianco = indipendenti, blu = correlazione negativa.
+**Formule chiave:**
+- Frontiera analitica: $\sigma^2(\mu_p) = (A\mu_p^2 - 2B\mu_p + C)/D$ con scalari $A=\mathbf{1}'\Sigma^{-1}\mathbf{1},\ B=\mathbf{1}'\Sigma^{-1}\mu,\ C=\mu'\Sigma^{-1}\mu$
+- Tangenza: $\mathbf{w}_{tan} = \Sigma^{-1}(\mu - r_f\mathbf{1})\ /\ [\mathbf{1}'\Sigma^{-1}(\mu - r_f\mathbf{1})]$
+- Portafoglio ottimo: $y^* = (\mu_{tan} - r_f)\ /\ (A \cdot \sigma^2_{tan})$
 
 ---
 
-## Parte B – CAPM e Single Index Model (`parte_B.py`)
+## Parte B – CAPM e Single Index Model (`parte_B/`)
+
+| Blocco | Punto traccia | Contenuto | Output PNG |
+|--------|---------------|-----------|------------|
+| 0–1    | —             | Import, configurazione, download dati | — |
+| 2      | 8             | Stima OLS beta e alpha (tutti i 10 titoli) + tabella significatività | — |
+| 3      | 8             | Bar chart beta e alpha di Jensen | `beta_alpha_B8.png` |
+| 4      | 8             | Security Market Line (SML) | `SML_B8.png` |
+| 5      | 9             | Matrice Σ_SIM + confronto con Σ empirica | `correlation_SIM_vs_empirical_B9.png` |
+| 6      | 9             | Rendimenti attesi CAPM vs empirici | `capm_vs_empirical_B9.png` |
+| 7      | 9             | Frontiera SIM/CAPM vs frontiera empirica | `frontier_SIM_vs_empirical_B9.png` |
+
+**Formule chiave:**
+- OLS: $\hat{\beta}_i = \text{Cov}(r_i, r_m)/\text{Var}(r_m)$,\ $\hat{\alpha}_i = \bar{r}_i - \hat{\beta}_i\bar{r}_m$
+- SIM covarianza: $\Sigma_{\text{SIM}} = \boldsymbol{\beta}\boldsymbol{\beta}'\sigma^2_m + \mathbf{D}$
+- CAPM rendimenti: $\mathbb{E}[r_i] = r_f + \beta_i(\mu_m - r_f)$
+
+---
+
+## Parte C – Stabilità e Bootstrap (`parte_C/`)
 
 *In sviluppo.*
 
-**Cosa si farà:**
-- Stima OLS dei beta di ciascun titolo rispetto all'S&P 500 (portafoglio di mercato).
-- Test di significatività dei coefficienti (beta e alpha di Jensen).
-- Ricostruzione della matrice varianza-covarianza tramite Single Index Model.
-- Confronto della frontiera efficiente SIM vs frontiera empirica della Parte A.
-
----
-
-## Parte C – Stabilità e Bootstrap (`parte_C.py`)
-
-*In sviluppo.*
-
-**Cosa si farà:**
-- Bootstrap i.i.d. con 500 campioni di T = 120 mesi (con reinserimento).
-- Per N = 5 e N = 10 asset: stima del portafoglio di tangenza su ciascun campione.
-- Analisi della distribuzione dei pesi e dello Sharpe Ratio al variare di N/T.
-- Conclusione: al crescere di N (con T fisso) l'errore di stima della covarianza esplode → i pesi diventano instabili.
-
----
-
-## Note metodologiche
-
-- **Prezzi adjusted vs unadjusted:** Yahoo Finance con `auto_adjust=True` restituisce prezzi già rettificati — non è necessario scaricare una colonna separata.  
-- **Frequenza mensile:** il campionamento mensile riduce il rumore del dato giornaliero e rende i rendimenti più vicini alla normalità, migliorando le stime della frontiera.  
-- **Short selling:** nella Parte A si costruisce prima la frontiera senza vincoli (short selling ammesso) e poi con il vincolo di non-negatività dei pesi (no short selling), per confrontare le due.
+Bootstrap i.i.d. con 500 campioni (T=120) per N=5 e N=10 asset. Analisi della stabilità dei pesi del portafoglio di tangenza e distribuzione dello Sharpe Ratio al variare del rapporto N/T.
