@@ -1,4 +1,8 @@
 yfinance
+pandas
+numpy
+matplotlib
+scipy
+seaborn
 
-
-# pip install -r requirements.txt
+# pip install -r requiremets.txt
