@@ -44,6 +44,8 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")   # backend non-interattivo: salva su file senza aprire finestre
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -211,7 +213,7 @@ def plot_correlation(corr_matrix):
     ax.set_title("Matrice di Correlazione – Rendimenti Mensili (2015–2025)", fontsize=13)
     fig.tight_layout()
     fig.savefig("correlation_heatmap.png", dpi=150)
-    plt.show()
+    plt.close(fig)
     print("Heatmap salvata: correlation_heatmap.png")
 
 
