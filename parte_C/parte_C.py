@@ -1,6 +1,6 @@
 # =============================================================================
 # CASO PRATICO EMFI 1 – PARTE C: Stabilità del portafoglio di tangenza
-# Autori: Leonardo Pratelli, Sara Albotica – Università di Pisa
+# Autori: Leonardo Pratelli – Università di Pisa
 # =============================================================================
 #
 # OBIETTIVO
