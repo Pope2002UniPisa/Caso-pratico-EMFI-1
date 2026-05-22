@@ -1,6 +1,6 @@
 # =============================================================================
 # CASO PRATICO EMFI 1 – PARTE B: CAPM e Single Index Model
-# Autori: Leonardo Pratelli – Università di Pisa
+# Autori: Leonardo Pratelli, Sara Albotica – Università di Pisa
 # =============================================================================
 #
 # OBIETTIVO
