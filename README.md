@@ -1,7 +1,7 @@
 # Caso Pratico EMFI 1
 **Corso:** Economia dei Mercati Finanziari e dell'Informazione  
 **Docente:** Prof. Fulvio Corsi – Università di Pisa  
-**Autori:** Leonardo Pratelli, Sara Albotica  
+**Autori:** Leonardo Pratelli  
 **Consegna:** fulvio.corsi@unipi.it — oggetto: "Caso pratico EMFI 1"
 
 ---
