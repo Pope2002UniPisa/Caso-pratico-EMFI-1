@@ -1,6 +1,6 @@
 # =============================================================================
 # CASO PRATICO EMFI 1 – PARTE A: Frontiera Efficiente
-# Autori: Leonardo Pratelli – Università di Pisa
+# Autori: Leonardo Pratelli, Sara Albotica – Università di Pisa
 # =============================================================================
 #
 # OBIETTIVO
