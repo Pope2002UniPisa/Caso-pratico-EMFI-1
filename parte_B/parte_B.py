@@ -1,53 +1,16 @@
-# =============================================================================
-# CASO PRATICO EMFI 1 – PARTE B: CAPM e Single Index Model
-# Autori: Leonardo Pratelli, Sara Albotica – Università di Pisa
-# =============================================================================
-#
-# OBIETTIVO
-# ---------
 # Questa parte implementa i Punti 8 e 9 della traccia:
 #
-#   Punto 8 – Stima OLS dei beta:
-#     Per ciascuno dei 10 titoli si stima il modello:
-#
-#         r_{i,t} = alpha_i + beta_i * r_{m,t} + eps_{i,t}
-#
-#     con r_m = rendimento mensile dell'S&P 500 (proxy del portafoglio di mercato).
-#     Si verifica la significatività statistica di beta (rischio sistematico) e
-#     di alpha (extra-rendimento rispetto al CAPM, detto "alpha di Jensen").
-#
+#   Punto 8 – Stima OLS dei beta e alpha:
 #   Punto 9 – Single Index Model e CAPM:
-#     - Si ricostruisce la matrice varianza-covarianza tramite il SIM:
-#
-#           Sigma_SIM = beta * beta' * sigma2_m + D
-#
-#       dove sigma2_m è la varianza del mercato e D = diag(sigma2_eps) è la
-#       matrice delle varianze idiosincratiche (residue dall'OLS).
-#       Questo riduce il numero di parametri da N(N+1)/2 a 2N+1.
-#
-#     - I rendimenti attesi vengono stimati tramite il CAPM:
-#
-#           E[r_i] = rf + beta_i * (mu_m - rf)
-#
-#       Il CAPM impone alpha = 0 in equilibrio. La differenza tra rendimento
-#       storico e CAPM (= alpha_i stimato) misura l'anomalia.
-#
-#     - Si costruisce la frontiera efficiente con mu_CAPM e Sigma_SIM
-#       e si confronta con la frontiera empirica della Parte A.
 #
 # LIBRERIE
 # ---------
-#   yfinance   → download dati Yahoo Finance
-#   pandas     → gestione DataFrame e serie temporali
-#   numpy      → algebra lineare, operazioni matriciali
-#   scipy      → test statistici OLS (distribuzione t), ottimizzazione
-#   matplotlib → grafici (SML, frontiere, bar chart)
-#   seaborn    → heatmap matrici di correlazione
-#
-# COME ESEGUIRE
-# -------------
-#   cd parte_B && python parte_B.py
-#   I grafici vengono salvati nella cartella parte_B/ (stessa del file).
+#   yfinance   
+#   pandas     
+#   numpy      
+#   scipy      
+#   matplotlib 
+#   seaborn    
 # =============================================================================
 
 import matplotlib
