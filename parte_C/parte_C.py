@@ -1,62 +1,25 @@
-# =============================================================================
-# CASO PRATICO EMFI 1 – PARTE C: Stabilità del portafoglio di tangenza
-# Autori: Leonardo Pratelli, Sara Albotica – Università di Pisa
-# =============================================================================
-#
-# OBIETTIVO
-# ---------
-# Analizzare la stabilità dei portafogli ottimali rispetto all'errore di stima
-# e studiare il ruolo del rapporto tra numero di asset (N) e numero di
-# osservazioni (T), tramite bootstrap i.i.d.
-#
 #   Punto 1 – Fissare T = 120 mesi (intero campione).
-#
 #   Punto 2 – Due casi:
 #       Caso 1: N = 5  (primi 5 titoli in ordine alfabetico)
 #       Caso 2: N = 10 (tutti i 10 titoli)
-#
 #   Punto 3 – Per ciascun caso, bootstrap i.i.d.:
 #       - 500 campioni di T = 120 mesi con reinserimento
 #       - Per ogni campione: stima mu e Sigma, calcola portafoglio di tangenza
-#         usando la formula analitica (short selling ammesso):
-#
-#           w_tan = Sigma^{-1}(mu - rf*iota) / [iota' Sigma^{-1}(mu - rf*iota)]
-#
-#         Il portafoglio di tangenza massimizza lo Sharpe Ratio.
-#         Lo Sharpe Ratio annualizzato del portafoglio:
-#
-#           SR = (mu_tan - rf) / sigma_tan * sqrt(12)
-#
+#         usando la formula analitica (short selling ammesso)
 #   Punto 4 – Per ciascun caso:
 #       - Media e deviazione standard dei pesi (tabella + boxplot)
 #       - Distribuzione dello Sharpe Ratio (istogramma)
-#
 #   Punto 5 – Commento:
 #       - Come cambia la stabilità dei pesi al crescere di N (T fisso)?
 #       - Quale è il ruolo del rapporto N/T?
 #
-# CHIAVE CONCETTUALE
-# ------------------
-# Con T fisso (120 mesi) e N crescente, il rapporto N/T aumenta:
-#   N=5:  N/T = 5/120 ≈ 0.042  → molti gradi di libertà, stime stabili
-#   N=10: N/T = 10/120 ≈ 0.083 → stima di Sigma più difficile, ottimizzatore
-#                                  può amplificare errori di stima
-# Per N → T la matrice Sigma diventa quasi singolare e i pesi esplodono.
-# Questo è il problema dell'"errore di stima" in portafoglio: la frontiera
-# efficiente è estremamente sensibile alle stime di mu e Sigma.
-#
 # LIBRERIE
 # ---------
-#   yfinance   → download dati Yahoo Finance
-#   pandas     → gestione DataFrame
-#   numpy      → algebra lineare, bootstrap
-#   scipy      → linalg (solve, inv)
-#   matplotlib → grafici (boxplot, istogrammi, bar chart)
-#
-# COME ESEGUIRE
-# -------------
-#   cd parte_C && python parte_C.py
-#   I grafici vengono salvati nella cartella parte_C/ (stessa del file).
+#   yfinance   
+#   pandas     
+#   numpy      
+#   scipy      
+#   matplotlib 
 # =============================================================================
 
 import matplotlib
