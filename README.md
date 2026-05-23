@@ -11,8 +11,8 @@
 ```
 Caso-pratico-EMFI-1/
 ├── EMFI_prova applicata_parte 1_2026.pdf   # Traccia ufficiale
-├── requiremets.txt                          # Dipendenze Python
-├── main.py                                  # Entry point
+├── requirements.txt                         # Dipendenze Python
+├── main.py                                  # Entry point (lancia A, B o C)
 ├── README.md
 ├── parte_A/                                 # Frontiera Efficiente (Punti 1–7)
 │   ├── notebook_A.ipynb                     # Notebook interattivo
@@ -34,7 +34,7 @@ Caso-pratico-EMFI-1/
 ## Installazione dipendenze
 
 ```bash
-pip install -r requiremets.txt
+pip install -r requirements.txt
 ```
 
 | Libreria | Utilizzo |
@@ -113,6 +113,14 @@ Razionale: massima diversificazione settoriale (tech + healthcare + energy) con 
 
 ## Parte C – Stabilità e Bootstrap (`parte_C/`)
 
-*In sviluppo.*
+Bootstrap i.i.d. con B=500 campioni (T=120 mesi) per due sottoinsiemi:
+- **N=5**: gli stessi 5 titoli selezionati nella Parte A (NVDA, MSFT, JNJ, MRK, XOM)
+- **N=10**: tutti i 10 titoli/indici
 
-Bootstrap i.i.d. con 500 campioni (T=120) per N=5 e N=10 asset. Analisi della stabilità dei pesi del portafoglio di tangenza e distribuzione dello Sharpe Ratio al variare del rapporto N/T.
+Analisi della stabilità dei pesi del portafoglio di tangenza e distribuzione dello Sharpe Ratio al variare del rapporto N/T.
+
+| Punto | Contenuto | Output PNG |
+|-------|-----------|------------|
+| 3–4 (N=5)  | Boxplot pesi + istogramma SR bootstrap N=5 | `bootstrap_weights_N5_C4.png`, `bootstrap_sharpe_N5_C4.png` |
+| 3–4 (N=10) | Boxplot pesi + istogramma SR bootstrap N=10 | `bootstrap_weights_N10_C4.png`, `bootstrap_sharpe_N10_C4.png` |
+| 5 | Confronto stabilità pesi e distribuzione SR: N=5 vs N=10 | `bootstrap_stability_comparison_C5.png`, `bootstrap_sharpe_comparison_C5.png` |

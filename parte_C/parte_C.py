@@ -1,6 +1,6 @@
 #   Punto 1 – Fissare T = 120 mesi (intero campione).
 #   Punto 2 – Due casi:
-#       Caso 1: N = 5  (primi 5 titoli in ordine alfabetico)
+#       Caso 1: N = 5  (gli stessi 5 titoli selezionati nella Parte A: NVDA, MSFT, JNJ, MRK, XOM)
 #       Caso 2: N = 10 (tutti i 10 titoli)
 #   Punto 3 – Per ciascun caso, bootstrap i.i.d.:
 #       - 500 campioni di T = 120 mesi con reinserimento
@@ -378,11 +378,15 @@ if __name__ == "__main__":
     print(f"Osservazioni: {T_tot} mesi  ({returns.index[0].date()} → {returns.index[-1].date()})")
     print(f"Tutti i titoli ({len(ALL_COLS)}): {ALL_COLS}")
 
-    # ── Step 2: Definizione dei sottoinsiemi (Punto 2) 
-    # "primi 5 titoli" = prime 5 colonne in ordine alfabetico (come restituisce yfinance)
-    TICKERS_5  = ALL_COLS[:5]     # N=5: sottocaso più parsimo
-    TICKERS_10 = ALL_COLS         # N=10: tutti i titoli
-    print(f"\nCaso 1 – N=5  (primi 5): {TICKERS_5}")
+    # ── Step 2: Definizione dei sottoinsiemi (Punto 2)
+    # Opzione A: stessi 5 titoli scelti nella Parte A per la frontiera efficiente
+    # (NVDA, MSFT, JNJ, MRK, XOM) → massima coerenza con il resto del progetto.
+    SELECTED_5 = ['NVDA', 'MSFT', 'JNJ', 'MRK', 'XOM']   # selezione della Parte A
+    TICKERS_5  = SELECTED_5
+    TICKERS_10 = ALL_COLS         # N=10: tutti i titoli (ordine yfinance)
+    assert set(TICKERS_5).issubset(set(TICKERS_10)), \
+        f"Errore: {TICKERS_5} non è sottoinsieme di {TICKERS_10}"
+    print(f"\nCaso 1 – N=5  (stessi 5 della Parte A): {TICKERS_5}")
     print(f"Caso 2 – N=10 (tutti):   {TICKERS_10}")
     print(f"T = {T_BOOT} mesi, B = {B} campioni bootstrap")
     print(f"Rapporto N/T: {5}/{T_BOOT}={5/T_BOOT:.3f}  vs  {10}/{T_BOOT}={10/T_BOOT:.3f}\n")
