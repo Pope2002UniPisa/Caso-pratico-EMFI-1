@@ -14,8 +14,7 @@
 # =============================================================================
 
 import matplotlib
-matplotlib.use("Agg")   # backend non-interattivo: salva su file senza aprire finestre
-
+matplotlib.use("Agg")  
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -26,8 +25,7 @@ from scipy import stats
 from scipy.optimize import minimize
 
 
-# ── Configurazione (identica alla Parte A) ─────────────────────────────────────
-# Stessa struttura 3-3-3-1 e stessi parametri per garantire coerenza tra parti.
+# ── Configurazione (identica alla Parte A)
 
 TICKERS = {
     "Tech":       ["AAPL", "MSFT", "NVDA"],
@@ -37,10 +35,9 @@ TICKERS = {
 }
 ALL_TICKERS = [t for group in TICKERS.values() for t in group]
 
-# 5 titoli selezionati nella Parte A (stessi per il confronto delle frontiere)
 SELECTED = ["NVDA", "MSFT", "JNJ", "MRK", "XOM"]
 
-rf_annual = 0.02        # tasso risk-free annuo: proxy BOT 3 mesi 2015-2025
+rf_annual = 0.02        # tasso risk-free: BOT 3 mesi 2015-2025
 ann       = 12          # fattore di annualizzazione
 rf        = rf_annual / ann   # tasso mensile
 
