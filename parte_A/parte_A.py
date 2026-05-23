@@ -11,9 +11,6 @@
 #   Indice di mercato (benchmark per il CAPM nelle Parti B e C):
 #       ^GSPC (S&P 500)
 #
-# La diversificazione tra Tech, Healthcare ed Energy garantisce correlazioni
-# basse tra i settori, allargando la frontiera e migliorando il trade-off
-# rischio-rendimento disponibile.
 #
 # LIBRERIE UTILIZZATE
 # --------------------
@@ -36,8 +33,6 @@ import seaborn as sns
 #
 # ALL_TICKERS: lista ordinata dei 10 ticker che useremo per l'intero progetto.
 # START / END: finestra temporale di 10 anni → ~120 osservazioni mensili.
-# Il dataset copre sia periodi di rialzo (bull market post-2015) che crisi
-# (COVID 2020, rialzo tassi 2022), rendendo il campione statisticamente ricco.
 
 TICKERS = {
     "Tech":       ["AAPL", "MSFT", "NVDA"],
