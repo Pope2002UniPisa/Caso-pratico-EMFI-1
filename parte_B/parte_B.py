@@ -409,7 +409,7 @@ def print_ols_table(risky, ols):
 # ══════════════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
 
-    # ── Step 1: Download dati ────────────────────────────────────────────────
+    # ── Step 1: Download dati 
     print(f"Download: {ALL_TICKERS}  [{START} → {END}]")
     returns  = download_and_returns(ALL_TICKERS, START, END)
     r_m      = returns["SP500"]
@@ -419,7 +419,7 @@ if __name__ == "__main__":
 
     print(f"Osservazioni: {len(returns)} mesi\n")
 
-    # ── Step 2: Stima OLS dei beta (Punto 8) ─────────────────────────────────
+    # ── Step 2: Stima OLS dei beta (Punto 8) 
     # r_i = alpha_i + beta_i * r_m + eps_i
     ols = {t: ols_stats(returns[t], r_m) for t in RISKY}
     print_ols_table(RISKY, ols)
@@ -432,13 +432,13 @@ if __name__ == "__main__":
         for t in tickers:
             sector_map["SP500" if t == "^GSPC" else t] = sector
 
-    # ── Step 3: Bar chart beta e alpha ───────────────────────────────────────
+    # ── Step 3: Bar chart beta e alpha 
     plot_beta_alpha(RISKY, ols)
 
-    # ── Step 4: Security Market Line (Punto 8) ───────────────────────────────
+    # ── Step 4: Security Market Line (Punto 8) 
     plot_sml(RISKY, ols, returns, mu_m, rf, ann, palette, sector_map)
 
-    # ── Step 5: Costruzione Sigma_SIM (Punto 9) ──────────────────────────────
+    # ── Step 5: Costruzione Sigma_SIM (Punto 9) 
     # Sigma_SIM = beta * beta' * sigma2_m + diag(sigma2_eps)
     betas_arr = np.array([ols[t]["beta"] for t in RISKY])
     s2eps_arr = np.array([ols[t]["s2"]   for t in RISKY])

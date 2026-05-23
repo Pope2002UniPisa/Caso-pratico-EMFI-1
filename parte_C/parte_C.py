@@ -23,8 +23,7 @@
 # =============================================================================
 
 import matplotlib
-matplotlib.use("Agg")   # backend non-interattivo: salva su file senza finestre
-
+matplotlib.use("Agg")   
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -32,7 +31,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from scipy import linalg
 
-# ── Configurazione (identica alle Parti A e B) ─────────────────────────────────
+# ── Configurazione (identica alle Parti A e B) 
 
 TICKERS = {
     "Tech":       ["AAPL", "MSFT", "NVDA"],
@@ -42,9 +41,9 @@ TICKERS = {
 }
 ALL_TICKERS = [t for group in TICKERS.values() for t in group]
 
-rf_annual = 0.02        # tasso risk-free annuo: proxy BOT 3 mesi 2015-2025
-ann       = 12          # fattore di annualizzazione
-rf        = rf_annual / ann    # tasso risk-free mensile
+rf_annual = 0.02        
+ann       = 12          
+rf        = rf_annual / ann    
 
 START = "2015-01-01"
 END   = "2025-01-01"
@@ -73,7 +72,6 @@ def download_and_returns(tickers, start, end):
     prices.columns = [c if c != "^GSPC" else "SP500" for c in prices.columns]
     prices.dropna(how="all", inplace=True)
 
-    # Rendimenti logaritmici: r_t = ln(P_t / P_{t-1})
     returns = np.log(prices / prices.shift(1)).dropna()
     return returns
 
@@ -106,7 +104,6 @@ def tangency_portfolio(mu, Sigma, rf):
     iota = np.ones(N)
     exc  = mu - rf * iota           # excess return rispetto al risk-free
 
-    # Risolvi Sigma * z = exc (più stabile di inv(Sigma) @ exc)
     try:
         z = linalg.solve(Sigma, exc, assume_a="pos")
     except linalg.LinAlgError:
@@ -116,7 +113,7 @@ def tangency_portfolio(mu, Sigma, rf):
 
     # Se il denominatore è negativo, il portafoglio di tangenza è sull'asse
     # opposto (tutti gli asset hanno rendimento atteso < rf): non ha senso
-    # economico. Segnaliamo come campione invalido.
+    # economico. Quindi campione invalido.
     if denom <= 0:
         return np.full(N, np.nan), np.nan, False
 
@@ -154,21 +151,15 @@ def bootstrap_tangency(returns_df, rf, T_boot, B):
     """
     T_tot = len(returns_df)
     N     = returns_df.shape[1]
-    ret   = returns_df.values    # (T_tot, N) numpy array per velocità
-
+    ret   = returns_df.values    
     weights_boot = np.full((B, N), np.nan)
     sharpes_boot = np.full(B, np.nan)
 
     for b in range(B):
-        # Campionamento con reinserimento: seleziona T_boot indici in [0, T_tot)
         idx    = np.random.randint(0, T_tot, size=T_boot)
-        sample = ret[idx, :]              # (T_boot, N) campione bootstrap
-
-        # Stima mu e Sigma sul campione bootstrap
-        mu_b    = sample.mean(axis=0)    # (N,) rendimento medio
-        # ddof=1: varianza campionaria (non distorta)
-        Sigma_b = np.cov(sample, rowvar=False, ddof=1)   # (N, N)
-
+        sample = ret[idx, :]              
+        mu_b    = sample.mean(axis=0)    
+        Sigma_b = np.cov(sample, rowvar=False, ddof=1)   
         w, SR, ok = tangency_portfolio(mu_b, Sigma_b, rf)
         if ok:
             weights_boot[b, :] = w
@@ -212,17 +203,11 @@ def plot_bootstrap_weights(weights_boot, tickers, N, fname):
     Il boxplot mostra mediana, quartili e outlier: tanto più stretto il box,
     tanto più stabile è il peso di quell'asset.
     """
-    # Rimuovi righe con NaN (campioni con denom ≤ 0)
     valid = weights_boot[~np.isnan(weights_boot[:, 0]), :]
-
     fig, ax = plt.subplots(figsize=(max(9, N * 1.1), 6))
-
-    # Boxplot con whiskers a 5°–95° percentile per evidenziare gli outlier estremi
     bp = ax.boxplot([valid[:, i] for i in range(N)],
                     labels=tickers, patch_artist=True,
                     whis=[5, 95], showfliers=True)
-
-    # Colori alternati per leggibilità
     colors = plt.cm.tab10(np.linspace(0, 1, N))
     for patch, color in zip(bp["boxes"], colors):
         patch.set_facecolor(color)
@@ -265,7 +250,6 @@ def plot_bootstrap_sharpe(sharpes_boot, N, fname, sr_storico=None):
     ax.hist(sr_valid, bins=40, color="steelblue", edgecolor="white",
             alpha=0.8, density=True, label=f"SR bootstrap (B={len(sr_valid)})")
 
-    # Linee verticali: media e ±1 std
     mu_sr  = np.mean(sr_valid)
     std_sr = np.std(sr_valid)
     ax.axvline(mu_sr, color="navy", lw=2, ls="-",
@@ -386,7 +370,7 @@ def plot_sharpe_comparison(sr5, sr10, sr_storico5, sr_storico10, fname):
 # ══════════════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
 
-    # ── Step 1: Download dati ────────────────────────────────────────────────
+    # ── Step 1: Download dati 
     print(f"Download: {ALL_TICKERS}  [{START} → {END}]")
     returns = download_and_returns(ALL_TICKERS, START, END)
     ALL_COLS = list(returns.columns)   # ordine alfabetico yfinance
@@ -394,7 +378,7 @@ if __name__ == "__main__":
     print(f"Osservazioni: {T_tot} mesi  ({returns.index[0].date()} → {returns.index[-1].date()})")
     print(f"Tutti i titoli ({len(ALL_COLS)}): {ALL_COLS}")
 
-    # ── Step 2: Definizione dei sottoinsiemi (Punto 2) ───────────────────────
+    # ── Step 2: Definizione dei sottoinsiemi (Punto 2) 
     # "primi 5 titoli" = prime 5 colonne in ordine alfabetico (come restituisce yfinance)
     TICKERS_5  = ALL_COLS[:5]     # N=5: sottocaso più parsimo
     TICKERS_10 = ALL_COLS         # N=10: tutti i titoli
@@ -403,7 +387,7 @@ if __name__ == "__main__":
     print(f"T = {T_BOOT} mesi, B = {B} campioni bootstrap")
     print(f"Rapporto N/T: {5}/{T_BOOT}={5/T_BOOT:.3f}  vs  {10}/{T_BOOT}={10/T_BOOT:.3f}\n")
 
-    # ── Step 3a: Portafoglio di tangenza storico (benchmark) ─────────────────
+    # ── Step 3a: Portafoglio di tangenza storico (benchmark) 
     # Calcolato sull'intero campione, usato come riferimento nei grafici
 
     # N=5
@@ -418,17 +402,17 @@ if __name__ == "__main__":
 
     print(f"SR storico (intero campione): N=5 → {sr5_stor:.3f}  |  N=10 → {sr10_stor:.3f}")
 
-    # ── Step 3b: Bootstrap N=5 (Punto 3) ────────────────────────────────────
+    # ── Step 3b: Bootstrap N=5 (Punto 3) 
     print(f"\nBootstrap N=5  ({B} campioni × {T_BOOT} mesi)...")
     ws5, srs5, n_valid5 = bootstrap_tangency(returns[TICKERS_5], rf, T_BOOT, B)
     print(f"Campioni validi: {n_valid5}/{B}")
 
-    # ── Step 3c: Bootstrap N=10 (Punto 3) ───────────────────────────────────
+    # ── Step 3c: Bootstrap N=10 (Punto 3) 
     print(f"\nBootstrap N=10 ({B} campioni × {T_BOOT} mesi)...")
     ws10, srs10, n_valid10 = bootstrap_tangency(returns[TICKERS_10], rf, T_BOOT, B)
     print(f"Campioni validi: {n_valid10}/{B}")
 
-    # ── Step 4a: Tabelle peso (Punto 4) ──────────────────────────────────────
+    # ── Step 4a: Tabelle peso (Punto 4) 
     print_weight_table(ws5,  TICKERS_5,  5)
     print_weight_table(ws10, TICKERS_10, 10)
 
@@ -438,15 +422,15 @@ if __name__ == "__main__":
     print(f"Sharpe Ratio bootstrap N=10: media={np.nanmean(srs10):.3f}, "
           f"std={np.nanstd(srs10):.3f}")
 
-    # ── Step 4b: Grafici pesi (Punto 4) ──────────────────────────────────────
+    # ── Step 4b: Grafici pesi (Punto 4) 
     plot_bootstrap_weights(ws5,  TICKERS_5,  5,  "bootstrap_weights_N5_C4.png")
     plot_bootstrap_weights(ws10, TICKERS_10, 10, "bootstrap_weights_N10_C4.png")
 
-    # ── Step 4c: Grafici Sharpe (Punto 4) ────────────────────────────────────
+    # ── Step 4c: Grafici Sharpe (Punto 4) 
     plot_bootstrap_sharpe(srs5,  5,  "bootstrap_sharpe_N5_C4.png",  sr5_stor)
     plot_bootstrap_sharpe(srs10, 10, "bootstrap_sharpe_N10_C4.png", sr10_stor)
 
-    # ── Step 5: Confronto stabilità N=5 vs N=10 (Punto 5) ───────────────────
+    # ── Step 5: Confronto stabilità N=5 vs N=10 (Punto 5) 
     stds5  = np.nanstd(ws5,  axis=0)
     stds10 = np.nanstd(ws10, axis=0)
     plot_stability_comparison(stds5, stds10, TICKERS_5, TICKERS_10,
@@ -454,7 +438,7 @@ if __name__ == "__main__":
     plot_sharpe_comparison(srs5, srs10, sr5_stor, sr10_stor,
                            "bootstrap_sharpe_comparison_C5.png")
 
-    # ── Commento riassuntivo (Punto 5) ───────────────────────────────────────
+    # ── Commento riassuntivo (Punto 5) 
     print("\n" + "="*65)
     print("COMMENTO – Stabilità e ruolo del rapporto N/T")
     print("="*65)
