@@ -189,17 +189,18 @@ def markowitz_frontier(mu_vec, Sig_mat, n_points=300):
     iota = np.ones(n)
     Sinv = np.linalg.inv(Sig_mat)
 
-    # Scalari di Markowitz
-    A_mk = float(iota @ Sinv @ iota)
-    B_mk = float(iota @ Sinv @ mu_vec)
-    C_mk = float(mu_vec @ Sinv @ mu_vec)
-    D_mk = A_mk * C_mk - B_mk**2
+    # Scalari di Markowitz – convenzione delle slide del corso (EMFI_2, eq. 7-11):
+    #   A = 1'Σ^{-1}μ,  B = μ'Σ^{-1}μ,  C = 1'Σ^{-1}1,  D = BC - A²
+    A_mk = float(iota @ Sinv @ mu_vec)      # A = 1'Σ⁻¹μ
+    B_mk = float(mu_vec @ Sinv @ mu_vec)    # B = μ'Σ⁻¹μ
+    C_mk = float(iota @ Sinv @ iota)        # C = 1'Σ⁻¹1
+    D_mk = B_mk * C_mk - A_mk**2           # D = BC - A²
 
-    mu_gmv  = B_mk / A_mk
+    mu_gmv  = A_mk / C_mk                  # μ_GMV = A/C
     mu_grid = np.linspace(mu_gmv, mu_vec.max() * 1.6, n_points)
 
-    # Varianza sulla frontiera: sigma^2(mu_p) = (A*mu_p^2 - 2B*mu_p + C) / D
-    sig_grid = np.sqrt((A_mk * mu_grid**2 - 2*B_mk*mu_grid + C_mk) / D_mk)
+    # Varianza sulla frontiera (slide): σ²(μ_p) = (C·μ_p² - 2A·μ_p + B) / D
+    sig_grid = np.sqrt((C_mk * mu_grid**2 - 2*A_mk*mu_grid + B_mk) / D_mk)
 
     return sig_grid * np.sqrt(ann) * 100, mu_grid * ann * 100, mu_gmv
 

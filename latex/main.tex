@@ -115,6 +115,13 @@ Indice       & \^{}GSPC & S\&P 500 & Proxy portafoglio di mercato (CAPM) \\
 mensile), coerente con la media storica del BOT trimestrale italiano
 nel periodo 2015--2024.
 
+\textbf{Nota sui rendimenti.} Il codice calcola rendimenti logaritmici
+$r_t = \ln(P_t/P_{t-1})$, che godono di additività temporale.
+La teoria di Markowitz è formalmente fondata su rendimenti semplici
+($r_p = \mathbf{w}'r$); per dati mensili l'approssimazione
+$\ln(1+R)\approx R$ (errore medio $<0{,}5\%$) rende i due approcci
+sostanzialmente equivalenti.
+
 % ============================================================
 \section{Parte A -- Frontiera Efficiente}
 % ============================================================
@@ -199,13 +206,13 @@ a XOM con SR${\approx}$0,24).
 Con $N{=}5$ asset, la frontiera media-varianza senza vincoli si ottiene
 dai quattro scalari di Markowitz:
 \[
-  A = \mathbf{1}'\Sigma^{-1}\mathbf{1}, \quad
-  B = \mathbf{1}'\Sigma^{-1}\boldsymbol{\mu}, \quad
-  C = \boldsymbol{\mu}'\Sigma^{-1}\boldsymbol{\mu}, \quad
-  D = AC - B^2
+  A = \mathbf{1}'\Sigma^{-1}\boldsymbol{\mu}, \quad
+  B = \boldsymbol{\mu}'\Sigma^{-1}\boldsymbol{\mu}, \quad
+  C = \mathbf{1}'\Sigma^{-1}\mathbf{1}, \quad
+  D = BC - A^2
 \]
 i cui valori stimati sono riportati nella Tabella~\ref{tab:markowitz}.
-La frontiera è la curva $\sigma_p^2(\mu_p) = (A\mu_p^2 - 2B\mu_p + C)/D$.
+La frontiera è la curva $\sigma_p^2(\mu_p) = (C\mu_p^2 - 2A\mu_p + B)/D$.
 
 \begin{table}[h!]
 \centering
@@ -215,14 +222,16 @@ La frontiera è la curva $\sigma_p^2(\mu_p) = (A\mu_p^2 - 2B\mu_p + C)/D$.
 \toprule
 $A$ & $B$ & $C$ & $D$ \\
 \midrule
-652{,}37 & 6{,}0954 & 0{,}1654 & 70{,}76 \\
+6{,}0954 & 0{,}1654 & 652{,}37 & 70{,}76 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Il \textbf{Portafoglio di Minima Varianza Globale (GMV)} ha pesi
-$\mathbf{w}^{\text{GMV}} = \Sigma^{-1}\mathbf{1}/A$ e caratteristiche
-riportate nella Tabella~\ref{tab:gmv}.
+$\mathbf{w}^{\text{GMV}} = \Sigma^{-1}\mathbf{1}/C$,
+rendimento $\mu_{\text{GMV}} = A/C$ e varianza $\sigma^2_{\text{GMV}} = 1/C$,
+come derivato nelle slide (EMFI\_2, eq.~10--11).
+Le caratteristiche numeriche sono riportate nella Tabella~\ref{tab:gmv}.
 
 \begin{table}[h!]
 \centering
@@ -381,8 +390,8 @@ Ratio del portafoglio di tangenza ($\text{SR} = 1{,}328$).}
 
 \subsection{Punto 7 -- Portafoglio ottimo con avversione al rischio $A = 3$}
 
-Con avversione al rischio $A = 3$, la funzione di utilità
-media-varianza
+Con avversione al rischio $A = 3$ (parametro di utilità, distinto
+dagli scalari di Markowitz del Punto~2), la funzione
 $U = \mu_p - \tfrac{A}{2}\sigma_p^2$ è massimizzata allocando
 la quota ottima nel portafoglio rischioso (tangenza):
 \[
@@ -401,11 +410,11 @@ sono riassunte nella Tabella~\ref{tab:ottimo}.
 \centering
 \caption{Portafoglio ottimo ($A=3$, valori annualizzati) e allocazione.}
 \label{tab:ottimo}
-\begin{tabular}{lrrrrrrrr}
+\begin{tabular}{lrrrrrrrrr}
 \toprule
- & $y^*$ & $\mu_{\text{opt}}$ (\%) & $\sigma_{\text{opt}}$ (\%) & $r_f$ & NVDA & MSFT & JNJ & MRK \\
+ & $y^*$ & $\mu_{\text{opt}}$ (\%) & $\sigma_{\text{opt}}$ (\%) & $r_f$ & NVDA & MSFT & JNJ & MRK & XOM \\
 \midrule
-Ottimo & 1{,}669 & 60{,}76 & 44{,}26 & $-66{,}9\%$ & $66{,}1\%$ & $90{,}1\%$ & $-11{,}6\%$ & $42{,}5\%$ \\
+Ottimo & 1{,}669 & 60{,}76 & 44{,}26 & $-66{,}9\%$ & $66{,}1\%$ & $90{,}1\%$ & $-11{,}6\%$ & $42{,}5\%$ & $-20{,}1\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -427,17 +436,19 @@ di tangenza, confermando l'uso di leva.}
 
 Il modello stimato per ciascun titolo $i$ è:
 \[
-  r_{i,t} = \alpha_i + \beta_i\,r_{m,t} + \varepsilon_{i,t},
+  r_{i,t} = \hat\alpha_i^{\text{OLS}} + \hat\beta_i\,r_{m,t} + \hat\varepsilon_{i,t},
   \quad t = 1,\ldots,119,
 \]
-dove $r_{m,t}$ è il rendimento mensile dell'S\&P~500.
-I parametri OLS sono stimati manualmente tramite le formule chiuse:
+dove $r_{m,t}$ è il rendimento mensile dell'S\&P~500 (rendimenti \emph{raw},
+non in eccesso). I parametri OLS sono:
 \[
   \hat\beta_i = \frac{\text{Cov}(r_i, r_m)}{\text{Var}(r_m)}, \qquad
-  \hat\alpha_i = \bar r_i - \hat\beta_i\,\bar r_m
+  \hat\alpha_i^{\text{OLS}} = \bar r_i - \hat\beta_i\,\bar r_m
 \]
-con errori standard, $t$-statistica e $p$-value calcolati
-usando i residui OLS.
+\textbf{Nota:} l'intercetta OLS non è l'alpha di Jensen.
+La relazione è $\alpha_J = \hat\alpha_i^{\text{OLS}} - r_f(1 - \hat\beta_i)$,
+dove $\alpha_J$ rappresenta il vero excess return rispetto al CAPM
+ed è riportato nella Tabella~\ref{tab:capmvsemp}.
 
 \begin{table}[h!]
 \centering
@@ -476,15 +487,18 @@ I settori Energy (XOM, CVX, BP) e Healthcare difensivo (JNJ, PFE)
 hanno beta più bassi, coerenti con il loro ruolo di titoli
 a bassa sensibilità ciclica.
 
-\textbf{Commento sugli alpha.}
-Solo MSFT e NVDA presentano un $\hat\alpha$ statisticamente
+\textbf{Commento sulle intercette OLS.}
+Solo MSFT e NVDA presentano un $\hat\alpha^{\text{OLS}}$ statisticamente
 significativo ($p{<}0{,}01$): MSFT con $+14{,}74\%$ annuo e
-NVDA con $+37{,}87\%$ annuo. Questi \textit{alpha di Jensen}
-indicano un rendimento in eccesso rispetto a quanto previsto
-dal CAPM, verosimilmente legato all'impatto dell'intelligenza
-artificiale e del cloud computing nel periodo 2015--2024.
-Gli altri titoli hanno $\hat\alpha$ non significativi,
-coerentemente con l'assenza sistematica di anomalie.
+NVDA con $+37{,}87\%$ annuo. Queste intercette OLS indicano
+un rendimento sistematico non spiegato dall'esposizione al mercato
+($\hat\beta_i r_{m,t}$), verosimilmente legato all'impatto
+dell'intelligenza artificiale e del cloud computing nel periodo 2015--2024.
+Il corrispondente alpha di Jensen
+($\alpha_J = \hat\alpha^{\text{OLS}} - r_f(1-\hat\beta)$, Tabella~\ref{tab:capmvsemp})
+risulta NVDA $+39{,}42\%$ e MSFT $+14{,}65\%$.
+Gli altri titoli hanno intercetta non significativa,
+coerentemente con l'assenza di anomalie sistematiche.
 
 \begin{figure}[h!]
 \centering
