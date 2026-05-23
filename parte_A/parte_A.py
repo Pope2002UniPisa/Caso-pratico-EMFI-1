@@ -120,8 +120,6 @@ def compute_returns(prices):
     returns : pd.DataFrame – rendimenti logaritmici mensili (N-1 righe)
     """
     # np.log(P_t / P_{t-1}) = log(P_t) - log(P_{t-1})
-    # .shift(1) sposta i prezzi di un periodo verso il basso
-    # .dropna() elimina la prima riga (NaN perché non esiste P_{t-1})
     returns = np.log(prices / prices.shift(1)).dropna()
     return returns
 
@@ -178,12 +176,12 @@ def plot_correlation(corr_matrix):
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(
         corr_matrix,
-        annot=True,          # scrive il valore numerico in ogni cella
-        fmt=".2f",           # formato: 2 decimali
-        cmap="coolwarm",     # palette divergente centrata su 0
-        center=0,            # 0 → bianco (nessuna correlazione)
-        square=True,         # celle quadrate per leggibilità
-        linewidths=0.5,      # bordi sottili tra celle
+        annot=True,          
+        fmt=".2f",           
+        cmap="coolwarm",     
+        center=0,            
+        square=True,         
+        linewidths=0.5,      
         ax=ax,
         annot_kws={"size": 9}
     )
