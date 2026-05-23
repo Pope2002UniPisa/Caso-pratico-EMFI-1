@@ -44,3 +44,5 @@ if __name__ == "__main__":
             sys.exit(1)
         run_part(part)
     print("\nTutte le parti completate.")
+
+# Modifhce main.py per riproducibilità massima
