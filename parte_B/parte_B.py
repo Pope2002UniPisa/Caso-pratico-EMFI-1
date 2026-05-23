@@ -65,7 +65,6 @@ def download_and_returns(tickers, start, end):
     prices.columns = [c if c != "^GSPC" else "SP500" for c in prices.columns]
     prices.dropna(how="all", inplace=True)
 
-    # Rendimenti logaritmici: r_t = ln(P_t / P_{t-1})
     returns = np.log(prices / prices.shift(1)).dropna()
     return returns
 
@@ -110,25 +109,25 @@ def ols_stats(y_series, x_series):
     y, x = np.array(y_series, dtype=float), np.array(x_series, dtype=float)
     T    = len(y)
 
-    # ── Stime OLS ──────────────────────────────────────────────────────────────
+    # ── Stime OLS 
     beta  = np.cov(y, x, ddof=1)[0, 1] / np.var(x, ddof=1)
     alpha = y.mean() - beta * x.mean()
 
-    # ── Residui e varianza residua ─────────────────────────────────────────────
+    # ── Residui e varianza residua 
     eps = y - alpha - beta * x     # componente idiosincratica dell'asset i
     s2  = (eps @ eps) / (T - 2)   # ddof=2: due parametri stimati (alpha, beta)
 
-    # ── Errori standard (formula OLS classica) ─────────────────────────────────
+    # ── Errori standard (formula OLS classica) 
     Sxx   = ((x - x.mean())**2).sum()
     se_b  = np.sqrt(s2 / Sxx)
     se_a  = np.sqrt(s2 * (1 / T + x.mean()**2 / Sxx))
 
-    # ── t-stat e p-value bilaterale con T-2 gradi di libertà ──────────────────
+    # ── t-stat e p-value bilaterale con T-2 gradi di libertà 
     t_b, t_a = beta / se_b, alpha / se_a
     p_b = 2 * stats.t.sf(abs(t_b), df=T - 2)
     p_a = 2 * stats.t.sf(abs(t_a), df=T - 2)
 
-    # ── R² ────────────────────────────────────────────────────────────────────
+    # ── R² 
     TSS = ((y - y.mean())**2).sum()
     R2  = 1 - (eps @ eps) / TSS
 
@@ -236,7 +235,7 @@ def plot_beta_alpha(risky, ols):
     ax.legend(handles=[mpatches.Patch(color="tomato",    label="β>1 aggressivo"),
                        mpatches.Patch(color="steelblue", label="β<1 difensivo")], fontsize=9)
 
-    # Alpha di Jensen annualizzato
+    # Alpha annualizzato
     ax = axes[1]
     cols_a = ["limegreen" if a > 0 else "salmon" for a in alphas_ann]
     bars_a = ax.bar(risky, alphas_ann, color=cols_a, edgecolor="black", lw=0.5)
