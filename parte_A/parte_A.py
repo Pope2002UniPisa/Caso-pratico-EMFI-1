@@ -1,21 +1,3 @@
-# =============================================================================
-# CASO PRATICO EMFI 1 – PARTE A: Frontiera Efficiente
-# Autori: Leonardo Pratelli, Sara Albotica – Università di Pisa
-# =============================================================================
-#
-# OBIETTIVO
-# ---------
-# Questa parte implementa il Punto 1 della traccia:
-#   - Download di prezzi mensili (total return, dividend-adjusted) di 10 asset
-#     da Yahoo Finance per gli ultimi 10 anni (~120 osservazioni mensili).
-#   - Calcolo dei rendimenti logaritmici mensili.
-#   - Calcolo della matrice di varianza-covarianza e della matrice di
-#     correlazione, con stampa e visualizzazione grafica.
-#
-# SCELTA DEI TITOLI (struttura 3-3-3-1)
-# ---------------------------------------
-# Si seguono criteri di diversificazione settoriale per ridurre la correlazione
-# tra i titoli e ottenere la frontiera efficiente più "ampia" possibile.
 #
 #   Settore 1 – Tecnologia (alta crescita, alta volatilità):
 #       AAPL (Apple), MSFT (Microsoft), NVDA (Nvidia)
@@ -35,10 +17,10 @@
 #
 # LIBRERIE UTILIZZATE
 # --------------------
-#   yfinance  → download automatico dati storici da Yahoo Finance
-#   pandas    → gestione di serie temporali e DataFrame
-#   numpy     → algebra lineare e calcoli matriciali
-#   matplotlib / seaborn → visualizzazione grafica
+#   yfinance  
+#   pandas    
+#   numpy     
+#   matplotlib / seaborn 
 # =============================================================================
 
 import yfinance as yf
