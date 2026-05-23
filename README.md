@@ -86,7 +86,7 @@ Razionale: massima diversificazione settoriale (tech + healthcare + energy) con 
 | 13     | 7             | Portafoglio ottimo con A=3, curva indifferenza | `optimal_portfolio_A7.png` |
 
 **Formule chiave:**
-- Frontiera analitica: $\sigma^2(\mu_p) = (A\mu_p^2 - 2B\mu_p + C)/D$ con scalari $A=\mathbf{1}'\Sigma^{-1}\mathbf{1},\ B=\mathbf{1}'\Sigma^{-1}\mu,\ C=\mu'\Sigma^{-1}\mu$
+- Frontiera analitica: $\sigma^2(\mu_p) = (C\mu_p^2 - 2A\mu_p + B)/D$ con scalari $A=\mathbf{1}'\Sigma^{-1}\boldsymbol{\mu},\ B=\boldsymbol{\mu}'\Sigma^{-1}\boldsymbol{\mu},\ C=\mathbf{1}'\Sigma^{-1}\mathbf{1}$
 - Tangenza: $\mathbf{w}_{tan} = \Sigma^{-1}(\mu - r_f\mathbf{1})\ /\ [\mathbf{1}'\Sigma^{-1}(\mu - r_f\mathbf{1})]$
 - Portafoglio ottimo: $y^* = (\mu_{tan} - r_f)\ /\ (A \cdot \sigma^2_{tan})$
 
